@@ -11,3 +11,66 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.app {
+  width: 100%;
+  height: 100vh;
+}
+
+.sudoku {
+  width: 100%;
+  margin: auto;
+  max-width: 500px;
+  padding-top: 55px;
+}
+
+.row {
+  display: flex;
+  width: max-content;
+  border: 1px solid black;
+  border-bottom: none;
+}
+.row:last-of-type {
+  border-bottom: 1px solid black;
+}
+
+.svg {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+}
+.svg:active {
+  background-color: rgb(127,127,255);
+  border-radius: 30%;
+}
+
+.box {
+  width: 36px;
+  height: 36px;
+  border-radius: 2px;
+  background-color: #fff;
+  border: 0;
+  border-right: 0.5px solid gray;
+  padding: 4px;
+  text-align: center;
+  font-size: 32px;
+}
+.box:focus-visible {
+  outline: 0;
+}
+
+.box:last-of-type {
+  border: none;
+}
+
+.btnContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+  margin-left: -100px;
+  padding-top: 16px;
+}

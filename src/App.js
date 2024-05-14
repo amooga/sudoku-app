@@ -1,23 +1,21 @@
-import logo from './logo.svg';
-import './App.css';
+import Row from "./Row";
+import {ReactComponent as Undo} from "./undo.svg";
+import {ReactComponent as Puzzle} from "./puzzle.svg";
 
 function App() {
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app">
+      <div className="sudoku">
+        {Array(9).fill(0).map((p, index) => <Row key={index} />)}
+      </div>
+      <div className="btnContainer">
+        <Undo className="svg" alt="Undo" />
+        <div className="svg">
+          <Puzzle alt="New"  />
+        </div>
+      </div>
     </div>
   );
 }
