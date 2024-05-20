@@ -1,18 +1,15 @@
 import Row from "./Row";
 import {ReactComponent as Undo} from "./undo.svg";
 import {ReactComponent as Puzzle} from "./puzzle.svg";
-import { generateRandomNumber, printSudoku } from "./utils";
+import { generateRandomNumber, getRowColPosition, printSudoku } from "./utils";
 import { useEffect } from "react";
 
 function App() {
 
   useEffect(() => {
-    // console.log("here")
       const arr1 = generateRandomNumber();
       const arr2 = generateRandomNumber();
-      const arr3 = generateRandomNumber();
-    
-      // console.log(arr1, arr2, arr3);
+      const arr3 = generateRandomNumber(); 
 
       const [a00, a01, a02, a10, a11, a12, a20, a21, a22] = arr1;
       const [a33, a34, a35, a43, a44, a45, a53, a54, a55] = arr2;
@@ -30,10 +27,30 @@ function App() {
         [0, 0, 0, 0, 0, 0, a76, a77, a78],
         [0, 0, 0, 0, 0, 0, a86, a87, a88],
       );
+
+      // printSudoku(resolvedSudoku);
       
+      const rowColForBlocks = [
+        [0,0],
+        [0,3],
+        [0,6],
+        [3,0],
+        [3,3],
+        [3,6],
+        [6,0],
+        [6,3],
+        [6,6]
+      ];
+    
+      // Rows and Columns for 3rd block.
+      for(let number=1; number<=6; number++) {
+        const [rowFor3, colFor3] = getRowColPosition(resolvedSudoku, rowColForBlocks[2], number);
+        resolvedSudoku[rowFor3][colFor3] = number;
+      }
+
+      console.log("getting new line");
 
       printSudoku(resolvedSudoku);
- 
   }, [])
 
 
