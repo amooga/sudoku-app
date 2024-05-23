@@ -10,52 +10,92 @@ export function generateRandomNumber() {
     return arr;
 }
 
-  
-export function getRowColPosition(sudoku, [startRow, startCol], number) {
-    const endRow = startRow + 2;
-    const endCol = startCol + 2;
+export function fillSudoku(sudoku, [startRowNum, startColNum]) {
 
-    const validRowList = [];
-    const validColList = [];
-    const rejectColList = [];
+    const getRowColNum = (num) => [startRowNum + Math.floor(num/3), Math.floor(startColNum + num%3)];
 
-    // Find number in all of the sudoku.
-    let counter = 0;
-    while (counter <= 8) {
-        let colLocation = sudoku[counter].indexOf(number);
-        if( colLocation !== -1 ) {
-            rejectColList.push(colLocation);
-        } else {
-            if (counter >= startRow && counter <= endRow) {
-                validRowList.push(counter);
+    const blockArrayIndex = (row,col) => (row-startRowNum)*3+(col-startColNum);
+
+    const blockArray = generateRandomNumber();
+    const colSudoku = [];
+
+    console.log("sudoku", JSON.stringify(sudoku))
+    console.log("blockArray", blockArray)
+    for(let i = 8; i >= 0; i--) {
+        colSudoku[8-i] = sudoku.map((row, index) => row[i]);
+    }
+
+    const swappedValues = [];
+
+    for ( let number = 1; number <= 9; number ++) {
+        // check valid;
+        const [rowNum, colNum] = getRowColNum(blockArray.indexOf(number));
+
+        const isAvailableRow = !!sudoku[rowNum].includes(number);
+        const isAvailableCol = !!colSudoku[8-colNum].includes(number);
+
+        // Number is unique to rows and cols, let's keep it.
+        if (!isAvailableRow && !isAvailableCol) {
+            swappedValues.push(number);
+            continue;
+        }
+
+        let invalidValues = [...swappedValues];
+        if (isAvailableRow) {
+            invalidValues = [...invalidValues, ...sudoku[rowNum]];
+        }
+
+        if (isAvailableCol) {
+            invalidValues = [...invalidValues, ...colSudoku[8-colNum]];
+        }
+
+        invalidValues = [...new Set(invalidValues)];
+
+        const validValues = [];
+        Array(9).fill(0).forEach((val, index) => {
+            if(!invalidValues.includes(index+1)) validValues.push(index+1);
+        });
+
+        console.log(JSON.stringify({number, invalidValues, validValues}))
+
+        function swapValues(values) {
+            let isSwap = false;
+            for (let val of values) {
+                const [validNumRowLoc, validNumColLoc] = getRowColNum(blockArray.indexOf(val));
+                // No Swaps if Number and validValue are in same row or column 
+                if ((isAvailableCol && validNumColLoc === colNum) || (isAvailableRow && validNumRowLoc === rowNum)) {
+                    continue;
+                }
+
+                // Swap only if our valid number is not available in both rows and columns, do only valid swaps.
+                if ( !sudoku[validNumRowLoc].includes(number) && !colSudoku[8-validNumColLoc].includes(number) ) {
+                    if( (val < number) && ( sudoku[rowNum].includes(val) || colSudoku[8-colNum].includes(val) ) ) {
+                        continue;
+                    }
+                    blockArray[blockArrayIndex(rowNum, colNum)] = val;
+                    blockArray[blockArrayIndex(validNumRowLoc, validNumColLoc)] = number;
+
+                    console.log("swap", {number, val})
+                    isSwap = true;
+                    break;
+                }
             }
+            return isSwap;
         }
-        counter ++;
-    }
 
-    const validLocations = [];
 
-    counter = startCol;
-    while (counter <= endCol) {
-        const isAvailable = rejectColList.includes(counter);
-        if ( !isAvailable ) {
-            validColList.push(counter);
+        const isSwap = swapValues(validValues);
+        if (!isSwap && swappedValues.length !== 0) {
+            const isSwapForSwappedValues = swapValues(swappedValues);
+            console.log({number, isSwapForSwappedValues, R:"if false than no swapping possible and we have encountered an another corrupt case."})
         }
-        counter ++;
-    }
-    
-    validRowList.forEach(rowNumber => validColList.forEach(colNumber => {
-        if ( sudoku[rowNumber][colNumber] === 0 ) validLocations.push([rowNumber, colNumber])
-    }));
-
-    if(validLocations.length < 3) return validLocations[0];
-
-    let randomNumber = validLocations.length + 1;
-    while(randomNumber >= validLocations.length) {
-        randomNumber = getRandomNumber();
+        swappedValues.push(number);
     }
 
-    return validLocations[randomNumber - 1];
+    blockArray.forEach((value, index) => {
+        const [row, col] = getRowColNum(index);
+        sudoku[row][col] = value;
+    });
 }
 
 export function printSudoku(sudoku) {

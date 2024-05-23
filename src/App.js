@@ -1,7 +1,7 @@
 import Row from "./Row";
 import {ReactComponent as Undo} from "./undo.svg";
 import {ReactComponent as Puzzle} from "./puzzle.svg";
-import { generateRandomNumber, getRowColPosition, printSudoku } from "./utils";
+import { generateRandomNumber, fillSudoku, printSudoku } from "./utils";
 import { useEffect } from "react";
 
 function App() {
@@ -43,13 +43,8 @@ function App() {
       ];
     
       // Rows and Columns for 3rd block.
-      for(let number=1; number<=6; number++) {
-        const [rowFor3, colFor3] = getRowColPosition(resolvedSudoku, rowColForBlocks[2], number);
-        resolvedSudoku[rowFor3][colFor3] = number;
-      }
-
+      fillSudoku(resolvedSudoku, rowColForBlocks[2]);
       console.log("getting new line");
-
       printSudoku(resolvedSudoku);
   }, [])
 
