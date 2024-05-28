@@ -10,7 +10,7 @@ export function generateRandomNumber() {
     return arr;
 }
 
-export function fillSudoku(sudoku, [startRowNum, startColNum]) {
+export function fillRandomBlockSudoku(sudoku, [startRowNum, startColNum]) {
 
     const getRowColNum = (num) => [startRowNum + Math.floor(num/3), Math.floor(startColNum + num%3)];
 
@@ -96,6 +96,90 @@ export function fillSudoku(sudoku, [startRowNum, startColNum]) {
         const [row, col] = getRowColNum(index);
         sudoku[row][col] = value;
     });
+}
+
+export function fillRowsSudoku(sudoku, [startRowNum, startColumnNum]) {
+
+    let rowNumber = startRowNum;
+    while (rowNumber < startRowNum + 3) {
+
+        let colSudoku = [];
+        for(let i = 8; i >= 0; i--) {
+            colSudoku[8-i] = sudoku.map((row, index) => row[i]);
+        }
+
+        const missingRowValues = [];
+        Array(9).fill(0).forEach((val, index) => {
+            if(!sudoku[rowNumber].includes(index+1)) missingRowValues.push(index+1);
+        });
+
+        let [first, second, third] = [startColumnNum, startColumnNum+1, startColumnNum+2];
+
+        let colMapper = {};
+        colMapper[first] = []
+        colMapper[second] = []
+        colMapper[third] = []
+
+        let lengthArray = [0,0,0];
+
+
+        for(let value of missingRowValues){
+            if(!!!colSudoku[8-first].includes(value)) {
+                colMapper[first].push(value);
+                lengthArray[0]++;
+            }
+
+            if(!!!colSudoku[8-second].includes(value)) {
+                colMapper[second].push(value);
+                lengthArray[1]++;
+            }
+
+            if(!!!colSudoku[8-third].includes(value)) {
+                colMapper[third].push(value);
+                lengthArray[2]++;
+            }
+        }
+        
+        const colSequence = [first, second, third];
+
+        while(!!colSequence.length) {
+            const lowestIndex = getLowestAndRemove(lengthArray);
+            
+            for (let val of colMapper[colSequence[lowestIndex]]) {
+                if ( !!!sudoku[rowNumber].includes(val) ) {
+                    sudoku[rowNumber][colSequence[lowestIndex]] = val;
+                    break;
+                }
+            }
+            colSequence.splice(lowestIndex, 1);
+            lengthArray.splice(lowestIndex, 1)
+        }
+
+        rowNumber ++;
+    }
+
+    let isAllFill = true;
+    for ( let i = startRowNum; i < startRowNum + 3; i++ ) {
+        for ( let j = startColumnNum; j < startColumnNum + 3; j++ ) {
+            if( !!!sudoku[i][j] ) {
+                isAllFill = false
+                break;
+            }
+        }
+    }
+    return isAllFill
+}
+
+function getLowestAndRemove(values) {
+    let lowest = values[0];
+    let ind = 0;
+    values.forEach((val, index) => {
+        if(val < lowest) {
+            lowest = val;
+            ind = index;
+        }
+    });
+    return ind;
 }
 
 export function printSudoku(sudoku) {
