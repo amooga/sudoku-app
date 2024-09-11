@@ -2,9 +2,11 @@ import Row from "./Row";
 import {ReactComponent as Undo} from "./undo.svg";
 import {ReactComponent as Puzzle} from "./puzzle.svg";
 import { generateRandomNumber, fillRandomBlockSudoku, fillRowsSudoku, printSudoku } from "./utils";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 function App() {
+
+  const [sudoku, setSudoku] = useState([]); 
 
   // Use to fill out the sudoku.
   useEffect(() => {
@@ -18,7 +20,7 @@ function App() {
       const [a33, a34, a35, a43, a44, a45, a53, a54, a55] = arr2;
       const [a66, a67, a68, a76, a77, a78, a86, a87, a88] = arr3;
 
-      let sudoku = []; 
+      let sudoku = [];
       const rowColForBlocks = [
         [0,0],
         [0,3],
@@ -103,6 +105,8 @@ function App() {
         }
         console.log("getting new line");
         printSudoku(sudoku);
+
+        setSudoku(sudoku);
         isRepeat = false;
 
       }while(isRepeat)
@@ -113,7 +117,7 @@ function App() {
   return (
     <div className="app">
       <div className="sudoku">
-        {Array(9).fill(0).map((p, index) => <Row key={index} />)}
+        {sudoku.map((numList, index) => <Row numList={numList} key={index} />)}
       </div>
       <div className="btnContainer">
         <Undo className="svg" alt="Undo" />

@@ -1,9 +1,9 @@
 import Box from "./Box";
 
-export default function Row() {
+export default function Row({numList}) {
     return (
         <div className="row">
-            {Array(9).fill(0).map((p, index) => <Box key={index} onChange={(val) => console.log(val)} />)}
+            {numList.map((num, index) => <Box key={index} value={num} onChange={(val) => console.log(val)} />)}
         </div>
     )
 }
